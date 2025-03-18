@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
 import { toast } from "sonner";
+import Link from "next/link";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -42,21 +43,21 @@ const Navbar = () => {
     <nav className="bg-blue-500 text-white p-4 flex justify-between items-center">
       {isLogin && (
         <div className="flex space-x-4">
-          <a href="/" className="mr-4">
+          <Link href="/" className="mr-4">
             Trang Chủ
-          </a>
-          <a href="/words" className="mr-4">
+          </Link>
+          <Link href="/words" className="mr-4">
             Từ Vựng
-          </a>
-          <a href="/tests" className="mr-4">
+          </Link>
+          <Link href="/tests" className="mr-4">
             Bài Test
-          </a>
-          <a href="/check" className="mr-4">
+          </Link>
+          <Link href="/check" className="mr-4">
             Tiến độ
-          </a>
-          <a href="/vocal-calendar" className="mr-4">
+          </Link>
+          <Link href="/vocal-calendar" className="mr-4">
             Lịch Học
-          </a>
+          </Link>
         </div>
       )}
 
