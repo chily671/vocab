@@ -2,7 +2,8 @@ import { connectDB } from "@/lib/mongodb";
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import User from "../../../lib/models/Users"; // Đường dẫn đến mô hình người dùng
+import Users from "@/lib/models/Users"; // Đường dẫn đến mô hình người dùng
+
 
 export async function POST(req) {
   try {
@@ -15,7 +16,7 @@ export async function POST(req) {
       );
     }
 
-    const user = await User.findOne({ email });
+    const user = await Users.findOne({ email });
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return NextResponse.json(
         { success: false, error: "Sai email hoặc mật khẩu" },
