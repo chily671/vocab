@@ -1,14 +1,14 @@
-import clientPromise from "@/lib/mongodb";
+import { connectDB } from "@/lib/mongodb";
 import bcrypt from "bcrypt";
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
+import User from "@/lib/models/users"; // Đường dẫn đến mô hình người dùng
 
 export async function POST(req) {
   try {
-    const client = await clientPromise;
-    const db = client.db("English");
+    connectDB(); // Kết nối MongoDB
 
-    const { email, password } = await req.json();
+    const { email, password, username } = await req.json();
     if (!email || !password) {
       return NextResponse.json(
         { success: false, error: "Thiếu email hoặc mật khẩu" },
@@ -16,7 +16,7 @@ export async function POST(req) {
       );
     }
 
-    const existingUser = await db.collection("users").findOne({ email });
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
       return NextResponse.json(
         { success: false, error: "Email đã tồn tại" },
@@ -26,20 +26,23 @@ export async function POST(req) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = {
+      username: username || email.split("@")[0], // Nếu không có username, dùng email trước dấu @
       email,
       password: hashedPassword,
-      createdAt: new Date(),
-      updatedAt: new Date(),
     };
 
-    const result = await db.collection("users").insertOne(newUser);
+    const result = await User.insertOne(newUser);
     return NextResponse.json({
       success: true,
       message: "Đăng ký thành công!",
       data: newUser, // Không có `result.ops[0]` vì MongoDB driver mới không trả về `ops`
-      token: jwt.sign({ userId: newUser._id.toString() }, process.env.JWT_SECRET, {
-        expiresIn: "7d",
-      }),
+      token: jwt.sign(
+        { userId: newUser._id.toString() },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "7d",
+        }
+      ),
     });
   } catch (error) {
     console.error("Lỗi khi đăng ký:", error);

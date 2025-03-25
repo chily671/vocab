@@ -1,30 +1,26 @@
-import { MongoClient } from "mongodb";
+import mongoose from "mongoose";
+
 const uri = process.env.MONGODB_URI;
-const options = {};
 
-let client;
-let clientPromise;
-
-if (!process.env.MONGODB_URI) {
+if (!uri) {
   throw new Error("❌ Thêm biến môi trường MONGODB_URI vào .env");
 }
 
-if (!global._mongoClientPromise) {
-  client = new MongoClient(uri, options);
-  global._mongoClientPromise = client.connect().then(async (db) => {
-    console.log("✅ MongoDB connected");
+let isConnected = false;
 
-    // Lấy danh sách database để kiểm tra kết nối
-    const adminDb = db.db().admin();
-    const dbList = await adminDb.listDatabases();
-    console.log("📂 Danh sách database:", dbList);
+export const connectDB = async () => {
+  if (isConnected) return; // Tránh kết nối lại nếu đã kết nối
 
-    return db;
-  }).catch((err) => {
-    console.error("❌ MongoDB connection error:", err);
-  });
-}
-
-clientPromise = global._mongoClientPromise;
-
-export default clientPromise;
+  try {
+    await mongoose.connect(uri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    isConnected = true;
+    console.log("✅ MongoDB connected with Mongoose");
+    console.log("🔗 Connected to database:", mongoose.connection.name);
+  } catch (error) {
+    console.error("❌ MongoDB connection error:", error);
+    process.exit(1); // Dừng chương trình nếu lỗi
+  }
+};

@@ -1,10 +1,12 @@
-import clientPromise from "@/lib/mongodb";
+import { connectDB } from "@/lib/mongodb";
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import User from "@/lib/models/Users"; // Đường dẫn đến mô hình người dùng
 
 export async function POST(req) {
   try {
+    connectDB(); // Kết nối MongoDB
     const { email, password } = await req.json();
     if (!email || !password) {
       return NextResponse.json(
@@ -13,11 +15,7 @@ export async function POST(req) {
       );
     }
 
-    const client = await clientPromise;
-    const db = client.db("English");
-    const usersCollection = db.collection("users");
-
-    const user = await usersCollection.findOne({ email });
+    const user = await User.findOne({ email });
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return NextResponse.json(
         { success: false, error: "Sai email hoặc mật khẩu" },

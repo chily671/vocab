@@ -12,7 +12,7 @@ export default function AddWordPopup({ onWordAdded }) {
   const [meaning, setMeaning] = useState("");
   const [example, setExample] = useState("");
   const [pronunciation, setPronunciation] = useState("");
-  const [category, setCategory] = useState("");
+  const [topic, setTopic] = useState("");
   const [open, setOpen] = useState(false);
 
   async function handleSubmit(e) {
@@ -23,7 +23,7 @@ export default function AddWordPopup({ onWordAdded }) {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
-      body: JSON.stringify({ word, meaning, example, pronunciation, category }),
+      body: JSON.stringify({ word, meaning, example, pronunciation, topic }),
     });
 
     if (res.ok) {
@@ -33,7 +33,7 @@ export default function AddWordPopup({ onWordAdded }) {
       setMeaning("");
       setExample("");
       setPronunciation("");
-      setCategory("");
+      setTopic("");
     }
   }
 
@@ -106,15 +106,15 @@ export default function AddWordPopup({ onWordAdded }) {
           </div>
 
           <div className="flex flex-col">
-            <label htmlFor="category" className="font-bold">
-              Danh mục
+            <label htmlFor="topic" className="font-bold">
+              Chủ đề
             </label>
             <input
               type="text"
-              id="category"
-              placeholder="Danh mục"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
+              id="topic"
+              placeholder="Chủ đề"
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
               className="border p-2 w-full"
             />
           </div>

@@ -1,12 +1,18 @@
 "use client";
+import { useState } from "react";
+import Intro from "./components/Intro";
+import Dashboard from "./components/dashboard";
 
 export default function Home() {
+  const [isIntroDone, setIsIntroDone] = useState(false);
+
   return (
-    <main className="p-10 text-center">
-      <h1 className="text-4xl font-bold text-blue-600">
-        Welcome to Vocabulary App
-      </h1>
-      <p className="mt-4 text-lg">Lưu trữ từ vựng và làm bài kiểm tra!</p>
+    <main className="min-h-screen">
+      {!isIntroDone ? (
+        <Intro onFinish={() => setIsIntroDone(true)} />
+      ) : (
+        <Dashboard />
+      )}
     </main>
   );
 }

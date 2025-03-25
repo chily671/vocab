@@ -1,11 +1,16 @@
 import { NextResponse } from "next/server";
-import clientPromise from "@/lib/mongodb";
+import { connectDB } from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
 import dayjs from "dayjs";
 import jwt from "jsonwebtoken";
+// import from "@/lib/model/...";
+import Vocabulary from "@/lib/models/Vocabulary";
+import Users from "@/lib/models/users";
+import Topics from "@/lib/models/Topics";
 
 export async function GET(req) {
   try {
+    await connectDB(); // Kết nối MongoDB
     const token = req.cookies.get("token")?.value;
     if (!token) {
       return NextResponse.json(
@@ -15,8 +20,6 @@ export async function GET(req) {
     }
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const userId = decoded.userId;
-    const client = await clientPromise;
-    const db = client.db("English");
 
     const searchParams = new URL(req.url).searchParams;
     const date = searchParams.get("date");
@@ -26,12 +29,12 @@ export async function GET(req) {
     const endOfDay = dayjs(date).endOf("day").toDate();
 
     if (date) {
-      words = await db
-        .collection("vocabularies")
-        .find({ userId, createdAt: { $gte: startOfDay, $lt: endOfDay } })
-        .toArray();
+      words = await Vocabulary.find({
+        userId,
+        createdAt: { $gte: startOfDay, $lt: endOfDay },
+      });
     } else {
-      words = await db.collection("vocabularies").find({ userId }).toArray();
+      words = await Vocabulary.find({ userId });
     }
 
     return NextResponse.json({ success: true, data: words });
@@ -46,6 +49,7 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
+    await connectDB(); // Kết nối MongoDB
     const token = req.cookies.get("token")?.value;
     if (!token) {
       return NextResponse.json(
@@ -56,11 +60,7 @@ export async function POST(req) {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const userId = decoded.userId;
 
-    const client = await clientPromise;
-    const db = client.db("English");
-
     const body = await req.json();
-    console.log("🚀 ~ POST ~ body:", body);
     if (!body.word || !body.meaning) {
       return NextResponse.json(
         { success: false, error: "Thiếu thông tin từ vựng!" },
@@ -68,21 +68,36 @@ export async function POST(req) {
       );
     }
 
-    const newWord = {
-      userId: userId,
+    let topicId = null;
+
+    // Kiểm tra hoặc thêm topic theo userId
+    if (body.topic) {
+      const existingTopic = await Topics.findOne({ topic: body.topic, userId });
+      if (!existingTopic) {
+        const newTopic = await Topics.create({ topic: body.topic, userId });
+        topicId = newTopic._id;
+      } else {
+        topicId = existingTopic._id;
+      }
+    }
+
+    // Tạo từ vựng mới
+    const newWord = await Vocabulary.create({
+      userId,
       word: body.word,
       meaning: body.meaning,
       example: body.example || "",
       pronunciation: body.pronunciation || "",
       audioUrl: body.audioUrl || "",
-      category: body.category || "uncategorized",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+      topicId: topicId, // Lưu topic ID nếu có
+      topic: body.topic || null,
+    });
 
-    const result = await db.collection("vocabularies").insertOne(newWord);
-
-    return NextResponse.json({ success: true, data: result });
+    return NextResponse.json({
+      success: true,
+      data: newWord,
+      message: "Thêm từ thành công!",
+    });
   } catch (error) {
     console.error("❌ Lỗi khi thêm từ:", error);
     return NextResponse.json(
@@ -94,15 +109,12 @@ export async function POST(req) {
 
 export async function DELETE(req) {
   try {
-    const client = await clientPromise;
-    const db = client.db("English");
+    connectDB(); // Kết nối MongoDB
 
     const { id } = await req.json();
     if (!id) return NextResponse.json({ success: false, message: "Thiếu ID" });
 
-    const result = await db
-      .collection("vocabularies")
-      .deleteOne({ _id: new ObjectId(id) });
+    const result = await Vocabulary.deleteOne({ _id: new ObjectId(id) });
 
     if (result.deletedCount === 0) {
       return NextResponse.json({
@@ -122,26 +134,34 @@ export async function DELETE(req) {
 
 export async function PUT(req) {
   try {
-    const client = await clientPromise;
-    const db = client.db("English");
+    connectDB(); // Kết nối MongoDB
+    const token = req.cookies.get("token")?.value;
+    if (!token) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.userId;
 
-    const { id, word, meaning, category, example, pronunciation } =
+    const { id, word, meaning, topic, example, pronunciation } =
       await req.json();
-    console.log({ id, word, meaning, category });
-    if (!id || !word || !meaning || !category || !example || !pronunciation) {
+    console.log({ id, word, meaning, topic });
+    if (!id || !word || !meaning || !topic || !example || !pronunciation) {
       return NextResponse.json({
         success: false,
         message: "Thiếu thông tin bắt buộc",
       });
     }
 
-    const result = await db.collection("vocabularies").updateOne(
+    const result = await Vocabulary.updateOne(
       { _id: new ObjectId(id) },
       {
         $set: {
           word,
           meaning,
-          category,
+          topic,
           meaning,
           example,
           pronunciation,

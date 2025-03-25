@@ -27,8 +27,9 @@ export const AuthProvider = ({ children }) => {
         if (!isMounted) return; // ✅ Kiểm tra nếu component đã unmount
 
         const data = await res.json();
-        if (res.ok && data.user) {
-          setUser(data.user);
+        console.log("🚀 ~ fetchUser ~ data:", data);
+        if (res.ok && data.InfoUser) {
+          setUser(data.InfoUser);
           setIsLogin(true);
         } else {
           setIsLogin(false);
@@ -73,12 +74,12 @@ export const AuthProvider = ({ children }) => {
   };
 
   // 🛠 Hàm đăng ký
-  const register = async (email, password) => {
+  const register = async (email, password, username) => {
     try {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, username }),
       });
 
       const data = await res.json();

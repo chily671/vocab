@@ -7,7 +7,7 @@ export default function WordCard({ word, meaning }) {
 
   return (
     <div
-      className="relative w-40 h-40 cursor-pointer perspective-1000"
+      className="relative w-full h-40 cursor-pointer perspective-1000"
       onClick={() => setFlipped(!flipped)}
     >
       <div

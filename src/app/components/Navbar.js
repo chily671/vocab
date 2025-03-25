@@ -12,6 +12,7 @@ const Navbar = () => {
   const [mode, setMode] = useState("login"); // "login" hoặc "register"
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
   const router = useRouter();
   const { login, isLogin, logout, register, loading } = useAuth();
 
@@ -30,7 +31,7 @@ const Navbar = () => {
         router.push("/");
       }
     } else {
-      const res = await register(email, password);
+      const res = await register(email, password, username);
       if (res.success) {
         setOpen(false);
         toast.success("Đăng ký thành công!");
@@ -40,7 +41,7 @@ const Navbar = () => {
     }
   };
   return (
-    <nav className="bg-blue-500 text-white p-4 flex justify-between items-center">
+    <nav className="w-full flex justify-between items-center py-4 px-6 bg-white shadow-md mb-10">
       {isLogin && (
         <div className="flex space-x-4">
           <Link href="/" className="mr-4">
@@ -58,6 +59,9 @@ const Navbar = () => {
           <Link href="/vocal-calendar" className="mr-4">
             Lịch Học
           </Link>
+          <Link href="/topics" className="mr-4">
+            Chủ Đề Học
+          </Link>
         </div>
       )}
 
@@ -65,16 +69,15 @@ const Navbar = () => {
         <p>Đang tải...</p> // ✅ Có thể thay bằng Skeleton hoặc dấu `...`
       ) : !isLogin ? (
         <div className="flex space-x-4 p-4 justify-center">
+          <h1 className="text-2xl font-bold">Vocab App</h1>
           <Button
+            variant="outline"
             onClick={() => handleOpen("login")}
-            className="bg-blue-500 text-white"
+            className="mr-3"
           >
             Đăng nhập
           </Button>
-          <Button
-            onClick={() => handleOpen("register")}
-            className="bg-green-500 text-white"
-          >
+          <Button onClick={() => handleOpen("register")} className="mr-3">
             Đăng ký
           </Button>
 
@@ -100,16 +103,16 @@ const Navbar = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
-                {/* {mode === "register" && (
-                <input
-                  type="text"
-                  placeholder="Tên người dùng"
-                  className="border p-2 rounded"
-                  value={confirmPass}
-                  onChange={(e) => setConfirmPass(e.target.value)}
-                  required
-                />
-              )} */}
+                {mode === "register" && (
+                  <input
+                    type="text"
+                    placeholder="Tên người dùng"
+                    className="border p-2 rounded"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    required
+                  />
+                )}
                 <Button className="bg-blue-500 text-white w-full">
                   {mode === "login" ? "Đăng nhập" : "Đăng ký"}
                 </Button>

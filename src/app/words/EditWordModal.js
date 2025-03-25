@@ -13,7 +13,7 @@ const EditWordModal = ({
   onSave,
   setWordData,
 }) => {
-  const [category, setCategory] = useState(wordData.category || "");
+  const [topic, settopic] = useState(wordData.topic || "");
 
   const handleUpdate = async () => {
     const response = await fetch("/api/words", {
@@ -23,7 +23,7 @@ const EditWordModal = ({
         id: wordData._id, // Truyền đúng ID của từ đang chỉnh sửa
         word: wordData?.word,
         meaning: wordData?.meaning,
-        category: wordData?.category || "",
+        topic: wordData?.topic || "",
         example: wordData?.example,
         pronunciation: wordData?.pronunciation,
       }),
@@ -108,15 +108,15 @@ const EditWordModal = ({
           </div>
 
           <div className="flex flex-col">
-            <label htmlFor="category" className="font-bold">
-              Danh mục
+            <label htmlFor="topic" className="font-bold">
+              Chủ đề
             </label>
             <input
               type="text"
-              id="category"
-              placeholder="Danh mục"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
+              id="topic"
+              placeholder="Chủ đề"
+              value={topic}
+              onChange={(e) => settopic(e.target.value)}
               className="border p-2 w-full"
             />
           </div>
