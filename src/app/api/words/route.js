@@ -5,7 +5,6 @@ import dayjs from "dayjs";
 import jwt from "jsonwebtoken";
 // import from "@/lib/model/...";
 import Vocabulary from "@/lib/models/Vocabulary";
-import Users from "@/lib/models/users";
 import Topics from "@/lib/models/Topics";
 
 export async function GET(req) {

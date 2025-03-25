@@ -2,7 +2,7 @@ import { connectDB } from "@/lib/mongodb";
 import bcrypt from "bcrypt";
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
-import User from "@/lib/models/users"; // Đường dẫn đến mô hình người dùng
+import User from "@/lib/models/Users"; // Đường dẫn đến mô hình người dùng
 
 export async function POST(req) {
   try {
