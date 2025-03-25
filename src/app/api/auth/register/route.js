@@ -2,7 +2,7 @@ import { connectDB } from "@/lib/mongodb";
 import bcrypt from "bcrypt";
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
-import Users from "../../../lib/models/Users"; 
+import User from "@/lib/models/User";
 
 export async function POST(req) {
   try {
@@ -16,7 +16,7 @@ export async function POST(req) {
       );
     }
 
-    const existingUser = await Users.findOne({ email });
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
       return NextResponse.json(
         { success: false, error: "Email đã tồn tại" },
@@ -31,7 +31,7 @@ export async function POST(req) {
       password: hashedPassword,
     };
 
-    const result = await Users.insertOne(newUser);
+    const result = await User.insertOne(newUser);
     return NextResponse.json({
       success: true,
       message: "Đăng ký thành công!",

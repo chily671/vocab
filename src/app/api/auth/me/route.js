@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { verifyToken } from "@/lib/auth"; // ✅ Import hàm verifyToken
 import { connectDB } from "@/lib/mongodb"; // ✅ Import hàm connectDB
-import User from "@/lib/models/users"; // ✅ Import mô hình người dùng
+import User from "@/lib/models/User"; // ✅ Import mô hình người dùng
 
 export async function GET() {
   try {
