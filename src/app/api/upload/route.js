@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import formidable from "formidable";
 import * as XLSX from "xlsx";
 import Vocabulary from "@/lib/models/Vocabulary";
-import { connectDB } from "@/lib/mongodb"; // Kết nối MongoDB
+import { connectDB } from "@/lib/db"; // Kết nối MongoDB
 
 export const config = {
   api: {
