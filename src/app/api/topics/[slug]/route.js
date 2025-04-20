@@ -42,3 +42,40 @@ export async function GET(req, { params }) {
     );
   }
 }
+//api for update learned words
+export async function PUT(req, { params }) {
+   try {
+    const { slug } = await params;
+    const auth = await authenticate(req);
+
+    if (auth.error)
+      return NextResponse.json(
+        { success: false, error: auth.error },
+        { status: auth.status }
+      );
+
+    connectDB();
+
+    const body = await req.json();
+    const { learnedWords } = body;
+
+    if (!learnedWords || !Array.isArray(learnedWords)) {
+      return NextResponse.json(
+        { success: false, error: "Invalid request" },
+        { status: 400 }
+      );
+    }
+
+    const query = { userId: auth.userId, topic: slug };
+    const update = { $set: { learnedWords } };
+    await Vocabulary.updateMany(query, update);
+
+    return NextResponse.json({ success: true });
+  }
+  catch (error) {
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 500 }
+    );
+  }
+}

@@ -90,6 +90,7 @@ export async function POST(req) {
       audioUrl: body.audioUrl || "",
       topicId: topicId, // Lưu topic ID nếu có
       topic: body.topic || null,
+      learned: false,
     });
 
     return NextResponse.json({

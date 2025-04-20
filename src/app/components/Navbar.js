@@ -62,6 +62,9 @@ const Navbar = () => {
           <Link href="/topics" className="mr-4">
             Chủ Đề Học
           </Link>
+          <Link href="/groups" className="mr-4">
+            Nhóm Học
+          </Link>
         </div>
       )}
 

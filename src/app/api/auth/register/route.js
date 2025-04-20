@@ -15,6 +15,8 @@ export async function POST(req) {
         { status: 400 }
       );
     }
+    console.log("🚀 ~ POST ~ password:", password)
+    console.log("🚀 ~ POST ~ email:", email)
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -37,7 +39,7 @@ export async function POST(req) {
       message: "Đăng ký thành công!",
       data: newUser, // Không có `result.ops[0]` vì MongoDB driver mới không trả về `ops`
       token: jwt.sign(
-        { userId: newUser._id.toString() },
+        { userId: newUser._id },
         process.env.JWT_SECRET,
         {
           expiresIn: "7d",

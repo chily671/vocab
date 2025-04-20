@@ -1,35 +1,42 @@
 "use client";
 import { useState } from "react";
-import { Card } from "@/components/ui/card"; // Import từ shadcn
 
 export default function WordCard({ word, meaning }) {
   const [flipped, setFlipped] = useState(false);
+  const [checked, setChecked] = useState(false);
 
   return (
     <div
-      className="relative w-full h-40 cursor-pointer perspective-1000"
+      className="w-full h-[200px] [perspective:1000px] cursor-pointer"
       onClick={() => setFlipped(!flipped)}
     >
       <div
-        className={`w-full h-full transition-transform duration-700 transform-style-3d ${
+        className={`relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] ${
           flipped ? "rotate-y-180" : ""
         }`}
       >
-        {!flipped ? (
-          <>
-            {/* Mặt trước */}
-            <Card className="absolute w-full h-full flex items-center justify-center bg-blue-500 text-white font-bold rounded-lg">
-              {word}
-            </Card>
-          </>
-        ) : (
-          <>
-            {/* Mặt sau */}
-            <Card className="absolute w-full h-full flex items-center justify-center bg-green-500 text-white font-bold rounded-lg transform rotate-y-180">
-              {meaning}
-            </Card>
-          </>
-        )}
+        {/* Front */}
+        <div className="absolute w-full h-full [backface-visibility:hidden] bg-white text-black flex items-center justify-center text-2xl rounded-[10px] border-[10px] border-black">
+          <div className="relative w-full h-full flex items-center justify-center">
+            {/* Checkbox nằm bên trong mặt trước */}
+            {/* <input
+              type="checkbox"
+              checked={checked}
+              onChange={(e) => {
+                e.stopPropagation(); // tránh flip
+                setChecked(e.target.checked);
+              }}
+              className="absolute top-2 right-2 w-5 h-5 accent-green-500 z-10"
+              onClick={(e) => e.stopPropagation()}
+            /> */}
+            {word}
+          </div>
+        </div>
+
+        {/* Back */}
+        <div className="absolute w-full h-full [backface-visibility:hidden] rotate-y-180 bg-black text-white flex items-center justify-center text-2xl rounded-[10px] border-[10px]">
+          {meaning}
+        </div>
       </div>
     </div>
   );

@@ -27,7 +27,6 @@ export const AuthProvider = ({ children }) => {
         if (!isMounted) return; // ✅ Kiểm tra nếu component đã unmount
 
         const data = await res.json();
-        console.log("🚀 ~ fetchUser ~ data:", data);
         if (res.ok && data.InfoUser) {
           setUser(data.InfoUser);
           setIsLogin(true);

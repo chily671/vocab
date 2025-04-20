@@ -20,6 +20,7 @@ const VocabularySchema = new mongoose.Schema(
       type: String,
       required: true,
     }, // Tên chủ đề
+    learned: { type: Boolean, default: false }, // Trạng thái đã học
   },
   { timestamps: true }
 );

@@ -3,6 +3,9 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useEffect, useState, useCallback } from "react";
 import AddWordPopup from "./AddWordPopup";
 import EditWordModal from "./EditWordModal";
+import ListView from "../components/Listview";
+import UploadForm from "@/components/UploadForm";
+import GroupManagement from "@/components/GroupManager";
 
 export default function WordsPage() {
   const [words, setWords] = useState([]);
@@ -63,24 +66,10 @@ export default function WordsPage() {
   }
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Danh sách từ vựng</h1>
+    <div className="p-4 w-[100%] h-[">
       <AddWordPopup onWordAdded={fetchWords} />
 
-      {loading ? (
-        <p className="text-gray-500">Đang tải dữ liệu...</p>
-      ) : (
-        <ul className="space-y-2">
-          {words?.map((word) => (
-            <li
-              key={word._id}
-              className="flex justify-between items-center border p-2 rounded"
-            >
-              <span>
-                {word.word} - {word.meaning}
-              </span>
-              <div className="space-x-2">
-                <button onClick={() => speakWord(word.word)}>🔊</button>
+      {/* <button onClick={() => speakWord(word.word)}>🔊</button>
                 <button
                   onClick={() => {
                     setEditWord(word);
@@ -95,12 +84,13 @@ export default function WordsPage() {
                   className="bg-red-500 text-white px-3 py-1 rounded"
                 >
                   🗑️ Xóa
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
+                </button> */}
+      {loading ? (
+        <p className="text-gray-500">Đang tải dữ liệu...</p>
+      ) : (
+        <ListView data={words} />
       )}
+      <UploadForm />
 
       {/* Popup Xác nhận Xóa */}
       {deleteId && (
